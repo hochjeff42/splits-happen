@@ -1,0 +1,138 @@
+#! /bin/env/python 
+
+print("""___________________________
+
+Bowling Game Start
+___________________________""")
+
+#_____________________________________________________________________________________________________________________
+
+def getFrameVals(frame):
+    #this function will ask the user to input a string and will determine a value for each instance of the ball being rolled
+    #these values will be placed in a frame and the frame will be returned to be used by the calculateScore() function
+    
+           
+    x=1 #this vairable is used to determine placement in 'frame'
+    
+    #get the Input String 
+    scoreLineString=input("Please enter in the score line: ") 
+    
+    #replace all instance of "-" with "0" within the input string     
+    scoreLine=str.replace(scoreLineString, "-","0",20)
+    z=0 #Position of the scoreLine index 
+    
+    #Loop to determine value of each frame    
+    while (x<(len(scoreLine))): 
+        #If the first value is a strike
+        if ((scoreLine[z]=='X')|(scoreLine[z]=='x')):
+            frame[x]='strike'
+            x=x+1
+            z=z+1
+        #If the first roll is an integer follow by a spare 
+        elif (((int(scoreLine[z])>=0)&(int(scoreLine[z])<=9)) & (scoreLine[z+1]=='/')):
+            frame[x]=(scoreLine[z]) 
+            frame[x+1]=('spare')
+            z=z+2
+            x=x+2
+       #If the first and second rolls are both 0-9
+        elif (((int(scoreLine[z])>=0)&(int(scoreLine[z])<=9)) & ((int(scoreLine[z+1])>=0)&(int(scoreLine[z+1])<=9))):
+            frame[x]=(scoreLine[z])
+            frame[x+1]=(scoreLine[z+1])
+            z=z+2
+            x=x+2
+        else: 
+            print("value was dropped")
+              
+    #this frame value is set to 0 to prevent strike and spares at the end of the scoreLine string to cause errors
+    frame[(len(scoreLine)+1)]=0        
+    print(frame)
+    return frame
+    
+#_____________________________________________________________________________________________________________________________
+
+
+def calculateScore(frame):
+    # this function uses the frame passed from getFrameVals() to calculate the total score
+    # this function does NOT account for validating a proper bowling score
+        # for example, this function allows for the first roll of a frame to be an integer and the second roll to be a strike
+    # this function assumes that a spare will always follow an integer and will never directly follow a strike, as per bowling rules
+    
+    
+    totalScore=0
+    x=1
+    for x in frame:
+    # each instance of a roll will be referred to as a "ball." There will always be a first and second ball
+        # a third ball occurs due to a strike or during the tenth frame
+        # the "first ball" is the value of the current frame, the "second" ball is the value of the next frame
+ 
+        #first ball is a strike
+        if (frame[x]=='strike'): 
+            #second ball is a strike (Double)
+            if (frame[x+1]=='strike'): 
+                ##third ball is a strike (Turkey)
+                if (frame[x+2]=='strike'): 
+                    totalScore=totalScore+30
+                   
+                #third ball is a number    
+                elif ((int(frame[x+2])>=0)&(int(frame[x+2])<=9)): 
+                    totalScore=(totalScore+20+(int(frame[x+2])))
+                                        
+            #second ball is a number
+            elif ((int(frame[x+1])>=0)&(int(frame[x+1])<=9)):
+                #third ball is a spare
+                if (frame[x+2]=='spare'): 
+                    totalScore=totalScore+10+(int(frame[x+1]))+(10-(int(frame[x+1])))
+                #third ball is a number    
+                elif ((int(frame[x+2])>=0)&(int(frame[x+2])<=9)): 
+                    totalScore=(totalScore+10+(int(frame[x+1]))+(int(frame[x+2])))
+                    
+        
+        #first ball is a spare
+        elif (frame[x]=='spare'):  
+            #second ball is a strike
+            if (frame[x+1]=='strike'):  
+                totalScore=totalScore+(10-(int(frame[x-1])))+10
+                
+            #second ball is a number
+            elif ((int(frame[x+1])>=0)&(int(frame[x+1])<=9)): 
+                totalScore=totalScore+(10-(int(frame[x-1])))+(int(frame[x+1]))  
+                   
+        
+        #first ball is a number
+        elif ((int(frame[x])>=0)&(int(frame[x])<=9)): 
+            totalScore=totalScore+(int(frame[x]))
+                           
+            
+        else:
+            print('invalid input')        
+            
+    print("the total score is:  ")
+    print(totalScore)    
+#_________________________________________________________________________________________________________________________________
+
+def main():
+
+    frame={1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0,11:0}
+    getFrameVals(frame)
+    calculateScore(frame)
+#__________________________________________________________________________________________________________________________________
+
+main()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
