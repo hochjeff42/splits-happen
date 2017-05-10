@@ -1,13 +1,14 @@
 
 class frame():
-# a frame object represents a frame of a bowling score card
-# frameNumber uniquely identifies each instance of the frame object
-# rollThree is only used to represent a possible third bowl in the tenth frame 
+# a frame object represents a frame of a bowling score card.
+# frameNumber uniquely identifies each instance of the frame object.
+# rollThree is only used to represent a possible third bowl in the 10th frame 
 # frameType represents if a frame is open, strike, spare, or tenth 
-# frameValue is the combination of roll values and is used for calculating the
-# final score
+# frameValue is the combination of roll values and is used for 
+# calculating the final score
+
     def __init__(self, frameNumber, rollOne, rollTwo, 
-                       rollThree, frameValue, frameType):
+                rollThree, frameValue, frameType):
         self.frameNumber=frameNumber
         self.rollOne=rollOne
         self.rollTwo=rollTwo
@@ -17,15 +18,18 @@ class frame():
         
         
 def createFrames():           
-# creates each unique frame instance 
+# this function creates each unique frame instance 
     x=1
     framesList=[];
-    while x<=10:
+    
+    while x<=10:    
         # create a new frame, using x as the frameNumber
         frameObj=frame(x,0,0,0,0,'open')
-        # add the new frame object to a list 
+        
+        # append the new frame object to a list 
         framesList.append(frameObj) 
         x=x+1
+        
     return framesList
 
 
@@ -51,51 +55,93 @@ def getFrameValue(scoreline, framesList):
         
     while ((x<9) & (z<(len(scoreline)-1))):
         # if the first shot is a strike
-        if ((scoreline[z]=='X') | (scoreline[z]=='x')):
+        if ((scoreline[z]=='X') or (scoreline[z]=='x')):
             framesList[x].rollOne=10
             framesList[x].frameType='strike'
             x=x+1
             z=z+1
+            
         # if the first shot is a number and the second shot is a spare
-        elif (((int(scoreline[z])>=0)&(int(scoreline[z])<=9)) 
-                & (scoreline[z+1]=='/')):
+        elif (((int(scoreline[z])>=0)
+            and (int(scoreline[z])<=9)) 
+            and (scoreline[z+1]=='/')):
             framesList[x].rollOne=scoreline[z]
             framesList[x].rollTwo=(10-int(scoreline[z]))
             framesList[x].frameType='spare'
             x=x+1
             z=z+2
+            
         # if both shots are numbers
-        elif (((int(scoreline[z])>=0) & (int(scoreline[z])<=9)) 
-                & ((int(scoreline[z+1])>=0) & (int(scoreline[z+1])<=9))):
+        elif (((int(scoreline[z])>=0) 
+            and (int(scoreline[z])<=9)) 
+            and ((int(scoreline[z+1])>=0)
+            and (int(scoreline[z+1])<=9))):
+            
             framesList[x].rollOne=int(scoreline[z])
             framesList[x].rollTwo=int(scoreline[z+1])
-            framesList[x].frameValue=(
-                int(framesList[x].rollOne))+(int(framesList[x].rollTwo))
+            framesList[x].frameValue=((int(framesList[x].rollOne))
+                                     +(int(framesList[x].rollTwo)))
             framesList[x].frameType='open'
             x=x+1
             z=z+2
             
-    if x==9:
-    # a normal frame only has 3 different outcomes, a tenth frame has SEVEN
-    # needs rules for what if its a spare?
-    # these should be rules for getting the values of the attributes 
+    while ((x==9) and (z<=len(scoreline))):
+    # a normal frame only has 3 different outcomes, the 10th frame has seven
         framesList[x].frameType='tenth'
-    # if first shot is a strike
-        #if second shot is a strike
-            # if third shot is a strike
-            # if third shot is a number
-        # if second shot is a number
-            # if third shot is a spare
-            # if third shot is a number
-    # if first shot is a number
-        # if second shot is a spare
-            # if third shot is a strike
-            # if third shot is a number
-        # if second shot is a number
-        framesList[x].rollOne=10
-        framesList[x].rollTwo=10
-        framesList[x].rollThree=0
-        framesList[x].frameValue=20         
+        
+        # if first shot is a strike
+        if ((scoreline[z]=='X') or (scoreline[z]=='x')):
+            framesList[x].rollOne=10
+            
+            # second shot is a strike
+            if ((scoreline[z+1]=='X') or (scoreline[z+1]=='x')):
+                framesList[x].rollTwo=10
+                
+                # if third shot is a strike
+                if ((scoreline[z+2]=='X') or (scoreline[z+2]=='x')):
+                    framesList[x].rollThree=10
+                    x=x+1
+                # if third shot is a number
+                elif ((int(scoreline[z+2])>=0) and (int(scoreline[z+2])<10)):
+                    framesList[x].rollThree=(int(scoreline[z+2]))
+                    x=x+1
+                    
+            # if second shot is a number
+            elif ((int(scoreline[z+1])>=0) and (int(scoreline[z+1])<10)):
+                framesList[x].rollTwo=(int(scoreline[z+1]))
+                
+                # if third shot is a spare
+                if (scoreline[z+2]=='/'):
+                    framesList[x].rollThree=(10-(int(scoreline[z+1])))
+                    x=x+1
+                # if third shot is a number
+                elif (int(scoreline[z+2])>=0 and int(scoreline[z+2])<10):
+                    framesList[x].rollThree=(int(scoreline[z+2]))
+                    x=x+1
+                    
+        # if first shot is a number
+        elif ((int(scoreline[z])>=0) and (int(scoreline[z])<10)):
+            framesList[x].rollOne=int(scoreline[z])
+            
+            # if second shot is a spare
+            if (scoreline[z+1]=='/'):
+                framesList[x].rollTwo=(10-(int(scoreline[z])))
+                
+                # if third shot is a strike
+                if ((scoreline[z+2]=='X') or (scoreline[z+2]=='x')):  
+                    framesList[x].rollThree=10
+                    x=x+1
+                # if third shot is a number
+                elif ((int(scoreline[z+2])>=0)
+                    and (int(scoreline[z+2])<10)):
+                    framesList[x].rollThree=(int(scoreline[z+2]))
+                    x=x+1
+                    
+            # if second shot is a number        
+            elif ((int(scoreline[z+1])>=0) and (int(scoreline[z+1])<10)):
+                framesList[x].rollTwo=(int(scoreline[z+1]))
+                x=x+1
+            
     return framesList
         
            
@@ -111,49 +157,53 @@ def calculateScore(framesList):
             
             # second ball is in the tenth frame and a strike
             if ((framesList[x+1].frameType=='tenth') 
-                & (int(framesList[x+1].rollOne==10))):
+                and (int(framesList[x+1].rollOne==10))):
+                
                 # if third ball is in the tenth frame and a strike
                 if (int(framesList[x+1].rollTwo)==10):
                     framesList[x].frameValue=30
                     x=x+1
                 # if third ball is number in tenth
                 elif ((int(framesList[x+1].rollTwo>=0))
-                        &(int(framesList[x+1].rollTwo<10))):
+                    and (int(framesList[x+1].rollTwo<10))):
                     framesList[x].frameValue=(20
-                        +(int(framesList[x+1].rollTwo)))
+                                            +(int(framesList[x+1].rollTwo)))
                     x=x+1     
             
             # second ball is in the tenth frame and a number
             elif ((framesList[x+1].frameType=='tenth')
-                    & ((int(framesList[x+1].rollOne)>=0)
-                    & (int(framesList[x+1].rollOne)<10))):
+                    and ((int(framesList[x+1].rollOne)>=0)
+                    and (int(framesList[x+1].rollOne)<10))):
+                    
                 # third ball is in tenth and a spare
-                if ((int(framesList[x+1].rollOne))
-                        +(int(framesList[x+1].rollTwo))==10):
+                if (int(framesList[x+1].rollOne)
+                    + int(framesList[x+1].rollTwo)==10):
                     framesList[x].frameValue=20
                     x=x+1
                 # third ball is in tenth and a number        
                 elif ((int(framesList[x+1].rollTwo>=0)) 
-                        & (int(framesList[x+1].rollTwo<10))):
+                    and (int(framesList[x+1].rollTwo<10))):
                     framesList[x].frameValue=(10 
-                        + (int(framesList[x+1].rollOne))
-                        + (int(framesList[x+1].rollOne)))
+                                            +(int(framesList[x+1].rollOne))
+                                            +(int(framesList[x+1].rollOne)))
                     x=x+1
                     
             # second ball is a strike (double)
             elif framesList[x+1].frameType=='strike':
+            
                 # third ball is in the tenth frame and a strike
                 if ((framesList[x+2].frameType=='tenth') 
-                        & (int(framesList[x+2].rollOne==10))):
+                    and (framesList[x+2].rollOne==10)):
                     framesList[x].frameValue=30
                     x=x+1
+                    
                 # third ball is in the tenth frame and a number
                 elif ((framesList[x+2].frameType=='tenth')
-                        & ((int(framesList[x+2].rollOne)>=0)
-                        & (int(framesList[x+2].rollOne)<10))):
-                    framesList[x].frameValue=(20
-                        + (int(framesList[x+2].rollOne)))
+                    and ((framesList[x+2].rollOne >=0)
+                    and (framesList[x+2].rollOne <10))):
+                    framesList[x].frameValue=(20 + framesList[x+2].rollOne)
                     x=x+1
+                    
                 # third ball is strike
                 elif framesList[x+2].frameType=='strike':
                     framesList[x].frameValue=30
@@ -161,12 +211,13 @@ def calculateScore(framesList):
                 # third ball is a number
                 elif framesList[x+2].frameType=='open':
                     framesList[x].frameValue==(20 
-                        + int(framesList[x+1].frameValue))
-                    x=x+1
-                    
+                                            +int(framesList[x+1].frameValue))
+                    x=x+1  
+                                      
             # second ball is a number
             elif (((int(framesList[x+1].rollOne))>=0)
-                    & ((int(framesList[x+1].rollOne))<10)):
+                and ((int(framesList[x+1].rollOne))<10)):
+                    
                 # third ball is a spare
                 if framesList[x+1].frameType=='spare':
                     framesList[x].frameValue=20
@@ -174,34 +225,91 @@ def calculateScore(framesList):
                 # third ball is a number    
                 elif framesList[x+1].frameType=='open':
                     framesList[x].frameValue=(10
-                        +(int(framesList[x+1].rollOne))
-                        +(int(framesList[x+1].rollTwo)))
-                    x=x+1
-                    
+                                            +(int(framesList[x+1].rollOne))
+                                            +(int(framesList[x+1].rollTwo)))
+                    x=x+1   
+                                     
         # frame is a spare            
         elif framesList[x].frameType=='spare':
-            # next roll is a strike
+        
+            # next ball is a strike
             if framesList[x+1].frameType=='strike':
                 framesList[x].frameValue=20
                 x=x+1
-            # next roll is a number
+                
+            # next ball is a number
             elif (((int(framesList[x+1].rollOne))>=0)
-                    &((int(framesList[x+1].rollOne))<10)):
+                and ((int(framesList[x+1].rollOne))<10)):
                 framesList[x].frameValue=(10
-                    +(int(framesList[x+1].rollOne)))
+                                        +(int(framesList[x+1].rollOne)))
                 x=x+1
                 
-        # frame is an open (womp womp)
+        # frame is an open 
         elif framesList[x].frameType=='open':
             framesList[x].frameValue=((int(framesList[x].rollOne))
                                     + (int(framesList[x].rollTwo)))
-            x=x+1
+            x=x+1    
+            
+    while ((x==9) and (framesList[x].frameType=='tenth')):
+        # if first shot is a strike
+        if framesList[x].rollOne==10:
+        
+            # second shot is a strike
+            if framesList[x].rollTwo==10:
+            
+                # if third shot is a strike
+                if framesList[x].rollThree==10:
+                    framesList[x].frameValue=30
+                    x=x+1
+                # if third shot is a number
+                elif (framesList[x].rollThree<10):
+                    framesList[x].frameValue=(20
+                                            +(framesList[x].rollThree))
+                    x=x+1
+                                            
+            # if second shot is a number
+            elif (framesList[x].rollTwo<10):
+            
+                # if third shot is a spare
+                if ((framesList[x].rollTwo + framesList[x].rollThree)==10):
+                    framesList[x].rollOne=20
+                    framesList[x].frameValue=(10
+                                             +framesList[x].rollTwo
+                                             +framesList[x].rollThree)
+                    x=x+1
+                # if third shot is a number
+                elif framesList[x].rollThree<10:
+                    framesList[x].frameValue=(10
+                                             +framesList[x].rollTwo
+                                             +framesList[x].rollThree)
+                    x=x+1
+                    
+        # if first shot is a number
+        elif framesList[x].rollOne<10:
+        
+            # if second shot is a spare
+            if ((framesList[x].rollOne + framesList[x].rollTwo)==10):
+            
+                # if third shot is a strike
+                if framesList[x].rollThree==10:
+                    framesList[x].frameValue=20
+                    x=x+1
+                # if third shot is an open
+                elif framesList[x].rollThree<10:
+                    framesList[x].frameValue=(10+framesList[x].rollThree)
+                    x=x+1
+                    
+            # if second shot is a number        
+            elif ((framesList[x].rollTwo+framesList[x].rollOne)<10):
+                framesList[x].frameValue=(framesList[x].rollOne
+                                         +framesList[x].rollTwo)
+                x=x+1
     
     totalScore=0
     while z<10:
         totalScore=(totalScore + (int(framesList[z].frameValue)))
         z=z+1
-    print(totalScore)        
+    print('The total score is:', totalScore)        
 
 
 def main():
